@@ -1,0 +1,24 @@
+---
+// Importa cualquier componente o módulo necesario aquí
+---
+
+<div class="flex justify-between px-4">
+    <!-- Video -->
+    <div class="video-container flex-1 bg-zinc-900 p-4 m-2">
+        <video autoplay loop muted class="w-full h-full">
+            <source src="/logo-video.mp4" type="video/mp4">
+            Tu navegador no soporta el elemento de video.
+        </video>
+    </div>
+
+    <!-- Stream de Twitch -->
+    <div class="twitch-stream-container flex-1 bg-zinc-900 p-4 m-2">
+        <iframe 
+            src="https://player.twitch.tv/?channel=ibai&parent=localhost" 
+            frameborder="0" 
+            allowfullscreen="true" 
+            scrolling="no" 
+            class="w-full h-full">
+        </iframe>
+    </div>
+</div>
