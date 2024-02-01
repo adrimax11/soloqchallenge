@@ -1,12 +1,12 @@
 [
     {
-        "id": 1,
+        "posicion": 1,
         "nombre": "ElYoya",
         "rol": "jungla",
         "twitter": "Elyoyal_Lol",
         "twitch": "elyoyalol",
         "cuenta": "adrimax11",
-        "elo": "Challenger (1228 LP)",
+        
         "partidas": "206",
         "ganadas": "132",
         "perdidas": "74",
