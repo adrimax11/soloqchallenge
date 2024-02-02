@@ -1,8 +1,27 @@
 ---
 import jugadores from './jugadores.json';
+
 import axios from "axios";
 
-let playersData = [];
+interface Jugador {
+  posicion: number;
+  nombre: string;
+  rol: string;
+  twitter: string;
+  twitch: string;
+  cuenta: string;
+  profileIconId: number;
+  id: string;
+  elo?: string; // Ahora es opcional
+  partidas: number;
+  wins?: number; // Ahora es opcional
+  losses?: number; // Ahora es opcional
+  winrate?: number; // Ahora es opcional
+}
+
+
+
+let playersData: Jugador[] = [];
 
 const api = await import.meta.env.RIOT_API_KEY;
 
@@ -32,7 +51,7 @@ async function getElo(summonerId) {
                 partidas: partidas,
                 wins: wins,
                 losses: losses,
-                winrate: winrate,
+                winrate: parseFloat(winrate.toFixed(2)),
             };
         } else {
             return {
@@ -50,13 +69,18 @@ async function getElo(summonerId) {
 
 for (let jugador of jugadores) {
     const data = await getSummonerData(jugador.cuenta);
-    const eloData = await getElo(data.id);
+    const eloData: { partidas?: number; wins?: number; losses?: number; winrate?: number } | undefined = await getElo(data.id);
+
     playersData.push({
         ...jugador,
+        ...(eloData || {}),
+        partidas: eloData?.partidas || 0,
+        wins: eloData?.wins || 0,
         profileIconId: data.profileIconId,
         id: data.id,
-        ...eloData,
-    });
+        winrate: eloData?.winrate || 0,
+        elo: eloData?.elo || 'Unranked', // Asignar 'elo' a 'jugador' si 'eloData' es undefined
+});
 }
 
 const roleToImage = {
@@ -121,9 +145,10 @@ const roleToImage = {
                     <td class="px-6 py-4 whitespace-nowrap">{jugador.partidas}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-lime-800">{jugador.wins}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-red-800">{jugador.losses}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{jugador.winrate.toFixed(2)}%</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{jugador.winrate}%</td>
                 </tr>
             ))}
         </tbody>
     </table>
 </body>
+```

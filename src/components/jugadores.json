@@ -1,17 +1,45 @@
 [
     {
         "posicion": 1,
-        "nombre": "ElYoya",
+        "nombre": "Adrimax11",
+        "rol": "support",
+        "twitter": "adrimax_",
+        "twitch": "adrimax11",
+        "cuenta": "adrimax11"
+      
+    },
+    {
+        "posicion": 2,
+        "nombre": "Koldo",
         "rol": "jungla",
-        "twitter": "Elyoyal_Lol",
-        "twitch": "elyoyalol",
-        "cuenta": "adrimax11",
-        
-        "partidas": "206",
-        "ganadas": "132",
-        "perdidas": "74",
-        "winrate": "64%"
-    }
+        "twitter": "KoldoLoL",
+        "twitch": "koldo",
+        "cuenta": "koldo"
+    },
+    {
+        "posicion": 3,
+        "nombre": "Nandisko",
+        "rol": "mid",
+        "twitter": "Nandisk0",
+        "twitch": "nandisko",
+        "cuenta": "nandisko"
+    },
+    {
+        "posicion": 4,
+        "nombre": "Nixerino",
+        "rol": "adc",
+        "twitter": "Nixerino",
+        "twitch": "nixerino",
+        "cuenta": "nixerino"
+    },
+    {
+        "posicion": 5,
+        "nombre": "Rafitta",
+        "rol": "top",
+        "twitter": "RafittaLoL",
+        "twitch": "rafitta",
+        "cuenta": "rafitta"
+    }	
    
     
 ]
