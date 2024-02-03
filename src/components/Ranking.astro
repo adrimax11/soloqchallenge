@@ -19,12 +19,12 @@ interface Jugador {
   winrate?: number; // Ahora es opcional
 }
 
-
-
 let playersData: Jugador[] = [];
 
+//Importar la API key
 const api = await import.meta.env.RIOT_API_KEY;
 
+// Función para obtener los datos del invocador
 async function getSummonerData(summonerName) {
     const url = `https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${summonerName}?api_key=${api}`;
 
@@ -35,6 +35,8 @@ async function getSummonerData(summonerName) {
         console.error(error);
     }
 }
+
+// Función para obtener el ELO del invocador
 async function getElo(summonerId) {
     const url = `https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}?api_key=${api}`;
 
@@ -67,6 +69,7 @@ async function getElo(summonerId) {
     }
 }
 
+// Función para obtener los datos de los jugadores
 for (let jugador of jugadores) {
     const data = await getSummonerData(jugador.cuenta);
     const eloData: { partidas?: number; wins?: number; losses?: number; winrate?: number } | undefined = await getElo(data.id);
@@ -83,6 +86,7 @@ for (let jugador of jugadores) {
 });
 }
 
+// Asociar cada rol con su respectiva imagen
 const roleToImage = {
               'jungla': 'jgl',
                 'top': 'top',
@@ -91,64 +95,212 @@ const roleToImage = {
                 'support': 'sup',
               // Agrega aquí las otras asociaciones de roles a imágenes
             };
+
+const useState = (initialValue) => {
+  let value = initialValue;
+  const getValue = () => value;
+  const setValue = (newValue) => {
+    value = newValue;
+  };
+  return [getValue, setValue];
+};
+
+
+
+
 ---
+<!-- Añade esto encima de tu tabla -->
 
+    <div class="flex justify-between px-4 bg-zinc-700 rounded">
+        <div class="flex-1 bg-zinc-900 p-4 m-2">
+            <input type="text" id="search" placeholder="Buscar..." class="px-2 py-1 ml-2 w-5/6 bg-zinc-800">
+            <button id="searchButton" class="px-2 py-1 bg-pink-500 text-white rounded ">Buscar</button>
+        </div>
+        <div class="flex-1 bg-zinc-900 p-4 m-2 text-zinc-950 bg-zinc-600 text-center rounded">
+            <button id="rulesButton">Normas</button>
+        </div>
+    </div>
 
-<body class="antialiased font-sans ">
     
-    <table class="min-w-full divide-y divide-gray-200 shadow-sm mt-4 bg-zinc-900 text-white">
-        <thead class="bg-zinc-900">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Streamer</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rol</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"><img src="/rss icons/twitter.png" alt="Twitter" width="15" height="15" /></th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"><img src="/rss icons/twitch.png" alt="Twitch" width="15" height="15" /></th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cuenta</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Elo</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Partidas</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ganadas</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Perdidas</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Winrate</th>
-            </tr>
-        </thead>
+    <!-- Añade esto donde quieras que aparezca el modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="image-container">
+            <img class="rulesImage" src="normas1.jpg">
+            <img class="rulesImage" src="normas.png">
+        </div>
         
-        <tbody class="bg-zinc-900 divide-y divide-gray-200">
-            {playersData.map((jugador) => (
-                <tr class="space-x-4 border-t border-white">
-                    <td class="px-6 py-4 whitespace-nowrap">{jugador.posicion}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{jugador.nombre}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                        <img src={`/rol icons/${roleToImage[jugador.rol]}.png`} alt={jugador.rol} class="inline-block" />
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                        <a href={`https://twitter.com/${jugador.twitter}`}>
-                            <img src="/rss icons/twitter.png" alt="Twitter" width="15" height="15" />
-                        </a>
-                    </td>
-                
-                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                        <a href={`https://twitch.tv/${jugador.twitch}`}>
-                            <img src="/rss icons/twitch.png" alt="Twitch" width="15" height="15" />
-                        </a>
-                    </td>                    
-                    <td class="px-6 py-4 whitespace-nowrap flex items-center">
-                        <img 
-                            width="30" 
-                            height="30" 
-                            src={`https://ddragon.leagueoflegends.com/cdn/14.2.1/img/profileicon/${jugador.profileIconId}.png`} 
-                            class="rounded-full mr-2" 
-                        />
-                        {jugador.cuenta}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">{jugador.elo}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{jugador.partidas}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-lime-800">{jugador.wins}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-red-800">{jugador.losses}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{jugador.winrate}%</td>
+            <!-- Aquí va tu tabla -->
+        </div>
+        
+    </div>
+    
+    <!-- Añade este CSS para dar estilo al modal -->
+    <style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        padding-top: 100px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+    
+    .modal-content {
+        position: relative;
+        margin: auto;
+        padding: 20px;
+        width: 80%;
+    }
+    
+    .image-container {
+        display: flex;
+        justify-content: center; /* Centra las imágenes horizontalmente */
+        align-items: center; /* Centra las imágenes verticalmente */
+    }
+    
+    .rulesImage {
+        width: 848px; /* Establece el ancho de las imágenes */
+        height: 1200px; /* Establece la altura de las imágenes */
+        cursor: pointer; /* Cambia el cursor a un puntero cuando se pasa por encima de las imágenes */
+    }
+    
+    .close {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    
+    #myTable.dimmed {
+        opacity: 0.5; /* Difumina la tabla */
+        background-color: #808080; /* Cambia el fondo a gris */
+    }
+    #search {
+    border-radius: 25px; /* Hace que el campo de búsqueda sea redondeado */
+    }
+
+    #searchButton {
+    background-color: #FF69B4; /* Hace que el botón de búsqueda sea rosa */
+    color: white; /* Hace que el texto del botón sea blanco */
+    border: none; /* Elimina el borde del botón */
+    cursor: pointer; /* Cambia el cursor a un puntero cuando se pasa por encima del botón */
+    }
+
+    #searchButton:hover {
+    background-color: #FF1493; /* Cambia el color del botón cuando se pasa por encima */
+    }
+    </style>
+    
+    <script>
+    // Obtiene el modal
+    var modal = document.getElementById("myModal");
+    
+    // Obtiene el botón que abre el modal
+    var btn = document.getElementById("rulesButton");
+    
+    // Obtiene el elemento <span> que cierra el modal
+    var span = document.getElementsByClassName("close")[0];
+    
+    // Obtiene las imágenes y la tabla
+    var images = document.getElementsByClassName("rulesImage");
+    var table = document.getElementById("myTable");
+    
+    // Cuando el usuario hace clic en el botón, abre el modal 
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+    
+    // Cuando el usuario hace clic en una imagen, difumina la tabla
+    for (var i = 0; i < images.length; i++) {
+        images[i].onclick = function() {
+        table.classList.add("dimmed");
+        }
+    }
+    
+    // Cuando el usuario hace clic en <span> (x), cierra el modal
+    span.onclick = function() {
+        modal.style.display = "none";
+        table.classList.remove("dimmed"); // También quita la difuminación de la tabla
+    }
+    
+    // Cuando el usuario hace clic en cualquier lugar fuera del modal, lo cierra
+    window.onclick = function(event) {
+        if (event.target == modal) {
+        modal.style.display = "none";
+        table.classList.remove("dimmed"); // También quita la difuminación de la tabla
+        }
+    }
+    </script>
+
+    <body class="antialiased font-sans ">
+        
+        <table class="min-w-full divide-y divide-gray-200 shadow-sm mt-4 bg-zinc-900 text-white flex-1 bg-zinc-700 p-4 m-2 px-4 mt-5 ">
+            <thead class="bg-zinc-900">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer"> Streamer</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rol</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"><img src="/rss icons/twitter.png" alt="Twitter" width="15" height="15" /></th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"><img src="/rss icons/twitch.png" alt="Twitch" width="15" height="15" /></th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cuenta</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Elo</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Partidas</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ganadas</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Perdidas</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Winrate</th>
                 </tr>
-            ))}
-        </tbody>
-    </table>
+            </thead>
+            
+            <tbody class="bg-zinc-900 divide-y divide-gray-200">
+                {playersData.map((jugador) => (
+                    <tr class="space-x-4 border-t border-white">
+                        <td class="px-6 py-4 whitespace-nowrap">{jugador.posicion}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{jugador.nombre}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                            <img src={`/rol icons/${roleToImage[jugador.rol]}.png`} alt={jugador.rol} class="inline-block" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                            <a href={`https://twitter.com/${jugador.twitter}`}>
+                                <img src="/rss icons/twitter.png" alt="Twitter" width="15" height="15" />
+                            </a>
+                        </td>
+                    
+                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                            <a href={`https://twitch.tv/${jugador.twitch}`}>
+                                <img src="/rss icons/twitch.png" alt="Twitch" width="15" height="15" />
+                            </a>
+                        </td>                    
+                        <td class="px-6 py-4 whitespace-nowrap flex items-center">
+                            <img 
+                                width="30" 
+                                height="30" 
+                                src={`https://ddragon.leagueoflegends.com/cdn/14.2.1/img/profileicon/${jugador.profileIconId}.png`} 
+                                class="rounded-full mr-2" 
+                            />
+                            {jugador.cuenta}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">{jugador.elo}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{jugador.partidas}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-lime-800">{jugador.wins}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-red-800">{jugador.losses}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{jugador.winrate}%</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    
 </body>
 ```
